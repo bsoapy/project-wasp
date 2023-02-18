@@ -6,3 +6,5 @@ Required modules:
 - traceback
 - os
 - numpy
+
+Run the program using: 'python3.10 WASPv{version}.py'
