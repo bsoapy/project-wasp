@@ -49,8 +49,8 @@ def report(chosen):
     # TODO Functionality to generate excel report.
     
 root = tk.Tk() # Create a window.
-width=670
-height=500
+width=800
+height=650
 root.geometry(f"{width}x{height}") # Window size.
 root.title("WASP Statistic Tool") # Window title.
 
@@ -58,13 +58,13 @@ root.title("WASP Statistic Tool") # Window title.
 labelTitle = tk.Label(root,
                  text="WASP Statistic Tool",
                  font=("Helvetica", 36, "bold"))
-labelTitle.grid(row=0, column=0, columnspan=2, pady=20)
+labelTitle.grid(row=0, column=0, columnspan=2, pady=15)
 
 # Description of the software tool.
 labelDesc = tk.Label(root,
                 text="Designed by Ben Sohanpal, Alex Read, Tony Dalziel, Jeremy Roy, Maksim Sics, Yosef Berezovskiy",
                 font=("Helvetica", 14))
-labelDesc.grid(row=1, column=0, columnspan=2, padx=15, pady=50)
+labelDesc.grid(row=1, column=0, columnspan=2, padx=15, pady=30)
 
 """ BUTTONS & FUNCTIONALITY -- Right Panel """
 rightPanel = tk.Frame(root)
@@ -120,16 +120,79 @@ STWlabel = tk.Label(rightPanel,
                     font=("Helvetica", 14, "bold"))
 STWlabel.grid(row=7, column=0)
 
-# A sub panel to house 
-rightSubPanel = tk.Frame(rightPanel)
+# A sub panel to house metrics
+metricPanel = tk.Frame(rightPanel)
+metricPanel.grid(row=8, column=0)
 
+""" Edit metrics """
+idwfVal = StringVar(metricPanel)
+idwfVal.set("")
+idwfLabel = tk.Label(metricPanel,
+    text="IDWF:",
+    font=("Helvetica", 14, "bold"))
+idwfLabel.grid(row=0, column=0)
+idwfEntry = tk.Entry(metricPanel, textvariable=idwfVal)
+idwfEntry.grid(row=0, column=1)
 
+mirVal = StringVar(metricPanel)
+mirVal.set("")
+mirLabel = tk.Label(metricPanel,
+    text="Max Infiltration Rate:",
+    font=("Helvetica", 14, "bold"))
+mirLabel.grid(row=1, column=0)
+mirEntry = tk.Entry(metricPanel, textvariable=mirVal)
+mirEntry.grid(row=1, column=1)
+
+tradeEffVal = StringVar(metricPanel)
+tradeEffVal.set("")
+tradeEffLabel = tk.Label(metricPanel,
+    text="Trade Effluent:",
+    font=("Helvetica", 14, "bold"))
+tradeEffLabel.grid(row=2, column=0)
+tradeEffEntry = tk.Entry(metricPanel, textvariable=tradeEffVal)
+tradeEffEntry.grid(row=2, column=1)
+
+perCapitaVal = StringVar(metricPanel)
+perCapitaVal.set("")
+perCapitaLabel = tk.Label(metricPanel,
+    text="Per Capita Domestic Flow:",
+    font=("Helvetica", 14, "bold"))
+perCapitaLabel.grid(row=3, column=0)
+perCapitaEntry = tk.Entry(metricPanel, textvariable=perCapitaVal)
+perCapitaEntry.grid(row=3, column=1)
+
+popCatchVal = StringVar(metricPanel)
+popCatchVal.set("")
+popCatchLabel = tk.Label(metricPanel,
+    text="Population Catchment:",
+    font=("Helvetica", 14, "bold"))
+popCatchLabel.grid(row=4, column=0)
+popCatchEntry = tk.Entry(metricPanel, textvariable=popCatchVal)
+popCatchEntry.grid(row=4, column=1)
+
+bodVal = StringVar(metricPanel)
+bodVal.set("")
+bodLabel = tk.Label(metricPanel,
+    text="BOD:",
+    font=("Helvetica", 14, "bold"))
+bodLabel.grid(row=5, column=0)
+bodEntry = tk.Entry(metricPanel, textvariable=bodVal)
+bodEntry.grid(row=5, column=1)
 
 """ FUNCTIONALITY OUTPUT -- Left Panel """
+leftPanel = tk.Frame(root)
+leftPanel.grid(row=2, column=1)
+
+outputLabel = tk.Label(leftPanel,
+    text="Output Results:",
+    font=("Helvetica", 28, "bold"))
+outputLabel.grid(row=1, column=0)
+outputMon = tk.Text(leftPanel, height=30, width=30, yscrollcommand=True)
+outputMon.grid(row=2, column=0)
 
 # Quit program button.
 quitButton = tk.Button(root, text="Quit Program", command=quitProg)
-#quitButton.pack()
+quitButton.grid(row=3, column=0)
 
 try:
     print("Program started...")
