@@ -183,6 +183,8 @@ bodEntry.grid(row=5, column=1)
 leftPanel = tk.Frame(root)
 leftPanel.grid(row=2, column=1)
 
+outputVar = StringVar(leftPanel)
+outputVar.set("")
 outputLabel = tk.Label(leftPanel,
     text="Output Results:",
     font=("Helvetica", 28, "bold"))
