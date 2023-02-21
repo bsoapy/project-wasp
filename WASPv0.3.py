@@ -24,6 +24,7 @@ def recallSTW(chosen):
     print(f"Chosen STW is {chosen.get()}.")
     # TODO Database functionality to recall STW info.
     info = {
+        "name":None,
         "IDWF":None,
         "Max Infiltration Rate":None,
         "Trade Effluent":None,
