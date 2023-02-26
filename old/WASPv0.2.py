@@ -62,7 +62,7 @@ labelTitle.grid(row=0, column=0, columnspan=2, pady=15)
 
 # Description of the software tool.
 labelDesc = tk.Label(root,
-                text="Designed by Ben Sohanpal, Alex Read, Tony Dalziel, Jeremy Roy, Maksim Sics, Yosef Berezovskiy",
+                text="Designed by Group 4 ",
                 font=("Helvetica", 14))
 labelDesc.grid(row=1, column=0, columnspan=2, padx=15, pady=30)
 
@@ -122,6 +122,7 @@ STWlabel.grid(row=7, column=0)
 
 # A sub panel to house metrics
 metricPanel = tk.Frame(rightPanel)
+
 metricPanel.grid(row=8, column=0)
 
 """ Edit metrics """
