@@ -12,6 +12,7 @@ requiredModules = [
     "os",
     "numpy",
     "json"
+    "openpyxl"
 ]
 
 # First ensure pip is installed on the machine.
