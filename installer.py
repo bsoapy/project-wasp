@@ -10,7 +10,8 @@ requiredModules = [
     "tkinter",
     "traceback",
     "os",
-    "numpy"
+    "numpy",
+    "json"
 ]
 
 # First ensure pip is installed on the machine.
