@@ -11,7 +11,7 @@ requiredModules = [
     "traceback",
     "os",
     "numpy",
-    "json"
+    "json",
     "openpyxl"
 ]
 
@@ -34,5 +34,5 @@ for module in requiredModules:
         import module
     except ImportError:
         print(f"{module} module not found. Installing {module}.")
-        os.system(f"pip install {module}")
+        os.system(f"pip3.10 install {module}")
         
