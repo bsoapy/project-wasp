@@ -1,7 +1,6 @@
 # Declarations and constants
 import tkinter as tk
 from tkinter import messagebox
-from tkinter import filedialog
 from tkinter import StringVar
 import traceback
 import os
@@ -52,7 +51,6 @@ def recallSTW(name):
         return None
     
     return STW_data
-
     
 def report(name):
     #get data from JSON file with STW name
@@ -180,22 +178,13 @@ def saveToExcel(name, fft, dwf, pe, old_fft, old_dwf, old_pe):
     
     try:
         df.to_excel(f"{name}.xlsx", index=False)
+        # An info box to indicate the report has been saved.
         messagebox.showinfo(title="Success", message="Saved to Excel")
     except:
-        #
+        # An error box to indicate the report was not able to save.
         messagebox.showerror(title="Error", message="Sorry, there was a problem saving to Excel")
 
     return None
-
-
-    
-
-
-
-
-
-    
-
     
 def viewSTW(name):
    
@@ -217,7 +206,7 @@ def viewSTW(name):
                         text="IDWF",
                         font=("Helvetica", 12, "bold"))
     labelIDWF.grid(row=1, column=0, padx=10, pady=10)
-
+    #thus each label has a corresponding text box.
     labelMIR = tk.Label(viewWindow,
                         text="Max Infiltration Rate",
                         font=("Helvetica", 12, "bold"))
@@ -253,24 +242,12 @@ def viewSTW(name):
     perCapitaVal.grid(row=4, column=1, padx=10, pady=10)
 
     popCatchVal = tk.Label(viewWindow, text=STW_data["POPC"], font=("Helvetica", 12))
-    popCatchVal.grid(row=5, column=1, padx=10, pady=10)
-
-   
-
-    
-   
-
-
-           
-    
-                           
-    
+    popCatchVal.grid(row=5, column=1, padx=10, pady=10)                  
     #Show all the metrics for a the STW
 
 def updateSTW():
     """Updating an STWs Metrics"""
     if messagebox.askyesno(title="Save Changes", message="Are you sure wish to update these metrics?\nResults for PE, FFT and DWF may change."):   
-      
         info = { # Retrieve information.
             "name": nameVal.get(),
             "IDWF":idwfVal.get(),
@@ -282,7 +259,7 @@ def updateSTW():
             "O_FFT":known_fft.get(),
             "O_DWF":known_dwf.get(),
             "O_PE":known_pe.get(),
-            }
+        }
         
         #check if any values are empty
         for value in info.values():
@@ -294,19 +271,14 @@ def updateSTW():
 
         with open("STW_data.json", "r") as f:
             data = json.load(f)
-
-        
         #update the data
         update = False
-        for object in data:
-       
-            
+        for object in data:      
             if data[object]["name"] == name:
                 messagebox.showinfo(title="Updating Entry", message="This entry already exists,so the current STW's data will be updated.")
 
                 data[object] = info
                 update = True
-
         if not update:
             messagebox.showinfo(title="Adding Entry", message="This entry does not exist, so a new entry will be created.")
             
@@ -314,25 +286,11 @@ def updateSTW():
             last_entry += 1
             data[str(last_entry)] = info
             
-
-
         #save the data
         with open("STW_data.json", "w") as f:
             json.dump(data, f, indent=4)
-
-        
-       
-
-
-
-            
-        # except:
-        #     messagebox.showerror(title="Error Updating Metrics", message="Sorry, there was a problem updating your metrics.")
-        #     return False
     else:
         return False
-
-
 
 root = tk.Tk() # 
 root.resizable(False, False)
@@ -353,7 +311,7 @@ labelDesc = tk.Label(root,
                 font=("Helvetica", 14))
 labelDesc.grid(row=1, column=0, columnspan=2, padx=15, pady=30)
 
-""" BUTTONS & FUNCTIONALITY -- Right Panel """
+""" BUTTONS & FUNCTIONALITY """
 rightPanel = tk.Frame(root)
 rightPanel.grid(row=2, column=0)
 
@@ -410,7 +368,7 @@ nameLbl = tk.Label(metricPanel,
 nameLbl.grid(row=0, column=0)
 nameEntry = tk.Entry(metricPanel, textvariable=nameVal)
 nameEntry.grid(row=0, column=1)
-
+# A text and label widget for the name of the STW.
 
 
 idwfVal = StringVar(metricPanel)
@@ -421,7 +379,7 @@ idwfLabel = tk.Label(metricPanel,
 idwfLabel.grid(row=1, column=0)
 idwfEntry = tk.Entry(metricPanel, textvariable=idwfVal)
 idwfEntry.grid(row=1, column=1)
-
+# A text and label widget for the 'idwf' of the STW.
 
 
 mirVal = StringVar(metricPanel)
@@ -432,7 +390,7 @@ mirLabel = tk.Label(metricPanel,
 mirLabel.grid(row=2, column=0)
 mirEntry = tk.Entry(metricPanel, textvariable=mirVal)
 mirEntry.grid(row=2, column=1)
-
+# A text and label widget for the 'mir' of the STW.
 
 
 tradeEffVal = StringVar(metricPanel)
@@ -443,8 +401,7 @@ tradeEffLabel = tk.Label(metricPanel,
 tradeEffLabel.grid(row=3, column=0)
 tradeEffEntry = tk.Entry(metricPanel, textvariable=tradeEffVal)
 tradeEffEntry.grid(row=3, column=1)
-
-
+# A text and label widget for the 'trade effluent' of the STW.
 
 
 perCapitaVal = StringVar(metricPanel)
@@ -455,7 +412,7 @@ perCapitaLabel = tk.Label(metricPanel,
 perCapitaLabel.grid(row=4, column=0)
 perCapitaEntry = tk.Entry(metricPanel, textvariable=perCapitaVal)
 perCapitaEntry.grid(row=4, column=1)
-
+# A text and label widget for the 'per capita domestic flow' of the STW.
 
 
 popCatchVal = StringVar(metricPanel)
@@ -466,8 +423,7 @@ popCatchLabel = tk.Label(metricPanel,
 popCatchLabel.grid(row=5, column=0)
 popCatchEntry = tk.Entry(metricPanel, textvariable=popCatchVal)
 popCatchEntry.grid(row=5, column=1)
-
-
+# A text and label widget for the 'population catchment' of the STW.
 
 
 bodVal = StringVar(metricPanel)
@@ -478,7 +434,7 @@ bodLabel = tk.Label(metricPanel,
 bodLabel.grid(row=6, column=0)
 bodEntry = tk.Entry(metricPanel, textvariable=bodVal)
 bodEntry.grid(row=6, column=1)
-
+# A text and label widget for the 'bod' of the STW.
 
 
 known_fft = StringVar(metricPanel)
@@ -489,7 +445,7 @@ known_fftLabel = tk.Label(metricPanel,
 known_fftLabel.grid(row=7, column=0)
 known_fftEntry = tk.Entry(metricPanel, textvariable=known_fft)
 known_fftEntry.grid(row=7, column=1)
-
+# A text and label widget for the known fft of the STW.
 
 known_dwf = StringVar(metricPanel)
 known_dwf.set("")
@@ -499,7 +455,7 @@ known_dwfLabel = tk.Label(metricPanel,
 known_dwfLabel.grid(row=8, column=0)
 known_dwfEntry = tk.Entry(metricPanel, textvariable=known_dwf)
 known_dwfEntry.grid(row=8, column=1)
-
+# A text and label widget for the known dwf of the STW.
 
 known_pe = StringVar(metricPanel)
 known_pe.set("")
@@ -509,15 +465,12 @@ known_peLabel = tk.Label(metricPanel,
 known_peLabel.grid(row=9, column=0)
 known_peEntry = tk.Entry(metricPanel, textvariable=known_pe)
 known_peEntry.grid(row=9, column=1)
-
+# A text and label widget for the known pe of the STW.
 
 
 # Button to update the metrics of the STW.
 viewButton = tk.Button(metricPanel, text="Update STW", command=lambda: updateSTW())
 viewButton.grid(row=10, column=0)    
-
-
-
 
 # Quit program button.
 quitButton = tk.Button(root, text="Quit Program", command=quitProg)
