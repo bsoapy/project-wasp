@@ -1,4 +1,4 @@
-# Declarations and constants
+# Modules
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import StringVar
@@ -35,8 +35,6 @@ def quitProg():
         return False
 
 def recallSTW(name):
- 
-
     #get all vaues for the STW from JSON file
     data = json.load(open('stw_data.json'))
     STW_data = {}
@@ -59,19 +57,36 @@ def report(name):
     #load data into seperate variables 
 
     #dry weather infiltration
-    i_dwf = data["IDWF"]
+    try:
+        i_dwf = data["IDWF"]
+    except:
+        i_dwf = "Not Input"
 
     #max infiltration rate
-    i_max = data["MIR"]
+    try:
+        i_max = data["MIR"]
+    except:
+        i_max = "Not Input"
+
 
     #trade eff flow
-    e = data["TE"]
+    try:
+        e = data["TE"]
+    except:
+        e = "Not Input"
+  
 
     #per capita domestc flow 
-    g = data["PCDF"]
+    try:
+        g = data["PCDF"]
+    except:
+        g = "Not Input"
 
     #catchment population
-    p = data["POPC"]
+    try:
+        p = data["POPC"]
+    except:
+        p = "Not Input"
     
     old_pe = data["O_PE"]
     old_dwf = data["O_DWF"]
@@ -80,10 +95,25 @@ def report(name):
     
 
     #calculate the values
+    try:
+        fft = calculate_fft(p,g,i_max,e)
+    
+    except:
+        fft = "Could not calculate (need more metrics)"
+    try:
+        dwf = calculate_dwf(p,g,i_dwf,e)
+    except:
+        dwf = "Could not calculate (need more metrics)"
 
-    fft = calculate_fft(p,g,i_max,e)
-    dwf = calculate_dwf(p,g,i_dwf,e)
-    pe = calculate_pe(fft)
+    try:
+        pe = calculate_pe(fft)
+    except:
+        pe = "Could not calculate (need more metrics)"
+
+
+    
+
+        
 
     #create a popup that displays the values, the old values and the difference
 
@@ -91,8 +121,8 @@ def report(name):
 
     popup = tk.Toplevel(root)
     popup.resizable(False, False)
-    width=500
-    height=300
+    width=600
+    height=350
     popup.geometry(f"{width}x{height}") # Window size.
     popup.title(f"Report for {name}") # Window title.
 
@@ -187,13 +217,12 @@ def saveToExcel(name, fft, dwf, pe, old_fft, old_dwf, old_pe):
     return None
     
 def viewSTW(name):
-   
     """Viewing an STWs Metrics"""
     #Create a new window that displays the STW's metrics.
     viewWindow = tk.Toplevel(root)
     viewWindow.resizable(False, False)
     width=300
-    height=300
+    height=400
     viewWindow.geometry(f"{width}x{height}") # Window size.
     viewWindow.title(f"Viewing {name}") # Window title.
 
@@ -226,7 +255,25 @@ def viewSTW(name):
     labelPC = tk.Label(viewWindow,
                         text="Population Catchment",
                         font=("Helvetica", 12, "bold"))
+
     labelPC.grid(row=5, column=0, padx=10, pady=10)
+
+    labelBOD = tk.Label(viewWindow, text= "BOD", font=("Helvetica", 12, "bold"))
+
+    labelBOD.grid(row=6, column=0, padx=10, pady=10)
+
+    labelKnownFFT = tk.Label(viewWindow, text= "Known FFT", font=("Helvetica", 12, "bold"))
+
+    labelKnownFFT.grid(row=7, column=0, padx=10, pady=10)
+
+    labelKnownDWF = tk.Label(viewWindow, text= "Known DWF", font=("Helvetica", 12, "bold"))
+
+    labelKnownDWF.grid(row=8, column=0, padx=10, pady=10)
+
+    labelKnownPE = tk.Label(viewWindow, text= "Known PE", font=("Helvetica", 12, "bold"))
+
+    labelKnownPE.grid(row=9, column=0, padx=10, pady=10)
+
 
     #put in data next to each metric - make them text labels
     idwfVal = tk.Label(viewWindow, text=STW_data["IDWF"], font=("Helvetica", 12))
@@ -242,7 +289,29 @@ def viewSTW(name):
     perCapitaVal.grid(row=4, column=1, padx=10, pady=10)
 
     popCatchVal = tk.Label(viewWindow, text=STW_data["POPC"], font=("Helvetica", 12))
-    popCatchVal.grid(row=5, column=1, padx=10, pady=10)                  
+    popCatchVal.grid(row=5, column=1, padx=10, pady=10)   
+
+
+    bodVal = tk.Label(viewWindow, text=STW_data["BOD"], font=("Helvetica", 12))
+
+    bodVal.grid(row=6, column=1, padx=10, pady=10)
+
+    known_fft = tk.Label(viewWindow, text=STW_data["O_FFT"], font=("Helvetica", 12))
+
+    known_fft.grid(row=7, column=1, padx=10, pady=10)
+
+    known_dwf = tk.Label(viewWindow, text=STW_data["O_DWF"], font=("Helvetica", 12))
+
+    known_dwf.grid(row=8, column=1, padx=10, pady=10)
+
+    known_pe = tk.Label(viewWindow, text=STW_data["O_PE"], font=("Helvetica", 12))
+
+    known_pe.grid(row=9, column=1, padx=10, pady=10)
+
+    
+
+
+               
     #Show all the metrics for a the STW
 
 def updateSTW():
