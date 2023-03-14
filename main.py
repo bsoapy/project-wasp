@@ -97,9 +97,10 @@ def report(name):
     #calculate the values
     try:
         fft = calculate_fft(p,g,i_max,e)
-    
+
     except:
         fft = "Could not calculate (need more metrics)"
+
     try:
         dwf = calculate_dwf(p,g,i_dwf,e)
     except:
@@ -117,10 +118,10 @@ def report(name):
 
     #create a popup that displays the values, the old values and the difference
 
-    #it should also have a save to excel button
+    #it should also have a save to excel bustton
 
     popup = tk.Toplevel(root)
-    popup.resizable(False, False)
+    popup.resizable(True, True)
     width=600
     height=350
     popup.geometry(f"{width}x{height}") # Window size.
@@ -220,7 +221,7 @@ def viewSTW(name):
     """Viewing an STWs Metrics"""
     #Create a new window that displays the STW's metrics.
     viewWindow = tk.Toplevel(root)
-    viewWindow.resizable(False, False)
+    viewWindow.resizable(True, True)
     width=300
     height=400
     viewWindow.geometry(f"{width}x{height}") # Window size.
@@ -232,23 +233,22 @@ def viewSTW(name):
 
     #create a label for each metric
     labelIDWF = tk.Label(viewWindow,
-                        text="IDWF",
+                        text="IDWF (I/d)",
                         font=("Helvetica", 12, "bold"))
     labelIDWF.grid(row=1, column=0, padx=10, pady=10)
     #thus each label has a corresponding text box.
     labelMIR = tk.Label(viewWindow,
-                        text="Max Infiltration Rate",
+                        text="Max Infiltration Rate (I/d)",
                         font=("Helvetica", 12, "bold"))
     labelMIR.grid(row=2, column=0, padx=10, pady=10)
 
     labelTE = tk.Label(viewWindow,
-                        text="Trade Effluent",
-
+                        text="Trade Effluent (I/d)",
                         font=("Helvetica", 12, "bold"))
     labelTE.grid(row=3, column=0, padx=10, pady=10)
 
     labelPCDF = tk.Label(viewWindow,
-                        text="Per Capita Domestic Flow",
+                        text="Per Capita Domestic Flow (I/d)",
                         font=("Helvetica", 12, "bold"))
     labelPCDF.grid(row=4, column=0, padx=10, pady=10)
 
@@ -262,15 +262,15 @@ def viewSTW(name):
 
     labelBOD.grid(row=6, column=0, padx=10, pady=10)
 
-    labelKnownFFT = tk.Label(viewWindow, text= "Known FFT", font=("Helvetica", 12, "bold"))
+    labelKnownFFT = tk.Label(viewWindow, text= "Published FFT (I/s)", font=("Helvetica", 12, "bold"))
 
     labelKnownFFT.grid(row=7, column=0, padx=10, pady=10)
 
-    labelKnownDWF = tk.Label(viewWindow, text= "Known DWF", font=("Helvetica", 12, "bold"))
+    labelKnownDWF = tk.Label(viewWindow, text= "Published DWF (I/d)", font=("Helvetica", 12, "bold"))
 
     labelKnownDWF.grid(row=8, column=0, padx=10, pady=10)
 
-    labelKnownPE = tk.Label(viewWindow, text= "Known PE", font=("Helvetica", 12, "bold"))
+    labelKnownPE = tk.Label(viewWindow, text= "Published PE", font=("Helvetica", 12, "bold"))
 
     labelKnownPE.grid(row=9, column=0, padx=10, pady=10)
 
@@ -362,15 +362,15 @@ def updateSTW():
         return False
 
 root = tk.Tk() # 
-root.resizable(False, False)
+root.resizable(True, True)
 width=665
 height=750
 root.geometry(f"{width}x{height}") # Window size.
 root.title("WASP Statistic Tool") # Window title.
-
 # Title of the software tool.
 labelTitle = tk.Label(root,
                  text="WASP Statistic Tool",
+                 anchor="nw",
                  font=("Helvetica", 36, "bold"))
 labelTitle.grid(row=0, column=0, columnspan=2, pady=15)
 
@@ -378,7 +378,7 @@ labelTitle.grid(row=0, column=0, columnspan=2, pady=15)
 labelDesc = tk.Label(root,
                 text="Designed by Ben Sohanpal, Alex Read, Tony Dalziel, Jeremy Roy, Maksim Sics, Yosef Berezovskiy",
                 font=("Helvetica", 14))
-labelDesc.grid(row=1, column=0, columnspan=2, padx=15, pady=30)
+labelDesc.grid(row=1, column=0, columnspan=2, padx=15, pady=10)
 
 """ BUTTONS & FUNCTIONALITY """
 rightPanel = tk.Frame(root)

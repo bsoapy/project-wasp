@@ -1,28 +1,248 @@
 {
     "0": {
-        "name": "Ampney St Peter",
-        "IDWF": 1.1,
-        "MIR": 12.3,
+        "name": "Bledington",
+        "IDWF": 95040,
+        "MIR": 354240,
         "TE": 0,
-        "PCDF": 3.87,
+        "PCDF": 139.9,
         "POPC": 334781,
-        "BOD": 0,
-        "O_FFT": 0,
-        "O_DWF": 0,
-        "O_PE": 0
+        "BOD": 15,
+        "O_FFT": 4.5,
+        "O_DWF": 249,
+        "O_PE": 620
     },
 
     "1": {
-        "name": "Ampney St Mary",
-        "IDWF": 1.1,
-        "MIR": 12.3,
+        "name": "Broadwell",
+        "IDWF": 354240,
+        "MIR": 354240,
         "TE": 0,
-        "PCDF": 3.87,
+        "PCDF": 139.9,
         "POPC": 334781,
-        "BOD": 0,
-        "O_FFT": 0,
-        "O_DWF": 0,
-        "O_PE": 0
+        "BOD": 26,
+        "O_FFT": "TEMP",
+        "O_DWF": 1010,
+        "O_PE": 3632
+    },
+
+    "2": {
+        "name": "Chadlington",
+        "IDWF": 69120,
+        "MIR": 259200,
+        "TE": 0,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 30,
+        "O_FFT": 4.3,
+        "O_DWF": 180,
+        "O_PE": 769
+    },
+
+    "3": {
+        "name": "Charlbury",
+        "IDWF": 69120,
+        "MIR": 94176,
+        "TE": 0,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 30,
+        "O_FFT": 18,
+        "O_DWF": 727,
+        "O_PE": 3029
+    },
+
+    "4": {
+        "name": "Chipping Norton",
+        "IDWF": 380160,
+        "MIR": 1952640,
+        "TE": 24040,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 10,
+        "O_FFT": 64,
+        "O_DWF": 2000,
+        "O_PE": 10767
+    },
+
+    "5": {
+        "name": "Church Hanborough",
+        "IDWF": 786240,
+        "MIR": 1842048,
+        "TE": 36,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 13,
+        "O_FFT": 50.52,
+        "O_DWF": 1455,
+        "O_PE": 8782
+    },
+    
+    "6": {
+        "name": "Combe",
+        "IDWF": 17280,
+        "MIR": 181440,
+        "TE": 0,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 30,
+        "O_FFT": 4,
+        "O_DWF": 175,
+        "O_PE": 702
+    },
+
+    "7": {
+        "name": "Enstone",
+        "IDWF": 155520,
+        "MIR": 829440,
+        "TE": 0,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 10,
+        "O_FFT": "TA",
+        "O_DWF": 450,
+        "O_PE": 1576
+    },
+
+    "8": {
+        "name": "Finstock",
+        "IDWF": 0,
+        "MIR": 224540,
+        "TE": 0,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 30,
+        "O_FFT": 17,
+        "O_DWF": 635,
+        "O_PE": 3647
+    },
+
+    "9": {
+        "name": "Great Rollright",
+        "IDWF": 8640,
+        "MIR": 605,
+        "TE": 0,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 30,
+        "O_FFT": "TA",
+        "O_DWF": 128,
+        "O_PE": 437
+    },
+
+    "10": {
+        "name": "Hook Norton",
+        "IDWF": 8640,
+        "MIR": 267840,
+        "TE": 0,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 10,
+        "O_FFT": 13,
+        "O_DWF": 633,
+        "O_PE": 2312
+    },
+
+    "11": {
+        "name": "Little Compton",
+        "IDWF": 8640,
+        "MIR": 138240,
+        "TE": 0,
+        "PCDF": 125.2,
+        "POPC": 334781,
+        "BOD": 25,
+        "O_FFT": 3.1,
+        "O_DWF": 90,
+        "O_PE": 354
+    },
+
+    "12": {
+        "name": "Longborough",
+        "IDWF": 51840,
+        "MIR": 32832,
+        "TE": 0,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 30,
+        "O_FFT": "TA",
+        "O_DWF": 80,
+        "O_PE": 522
+    },
+
+    "13": {
+        "name": "Middle Barton",
+        "IDWF": 69120,
+        "MIR": 501120,
+        "TE": 0,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 30,
+        "O_FFT": 13.7,
+        "O_DWF": 1188,
+        "O_PE": 1579
+    },
+    
+    "14": {
+        "name": "Milton-under-Wychwood",
+        "IDWF": 475200,
+        "MIR": 2220480,
+        "TE": 0,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 15,
+        "O_FFT": "NFFT",
+        "O_DWF": 1165,
+        "O_PE": 3977
+    },
+
+    "15": {
+        "name": "Moreton in Marsh",
+        "IDWF": 630720,
+        "MIR": 1969920,
+        "TE": 11647,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 15,
+        "O_FFT": 50.9,
+        "O_DWF": 1290,
+        "O_PE": 5869
+    },
+
+    "16": {
+        "name": "Sandford St Martin",
+        "IDWF": 0,
+        "MIR": 1728,
+        "TE": 3729,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 30,
+        "O_FFT": "TA",
+        "O_DWF": 36,
+        "O_PE": 130
+    },
+
+    "17": {
+        "name": "Spelsbury",
+        "IDWF": 0,
+        "MIR": 3456,
+        "TE": 0,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 30,
+        "O_FFT": "TA",
+        "O_DWF": 50,
+        "O_PE": 107
+    },
+
+    "18": {
+        "name": "Woodstock",
+        "IDWF": 345600,
+        "MIR": 1728000,
+        "TE": 3739,
+        "PCDF": 139.9,
+        "POPC": 334781,
+        "BOD": 30,
+        "O_FFT": 36.6,
+        "O_DWF": 1808,
+        "O_PE": 5332
     }
-   
 }
