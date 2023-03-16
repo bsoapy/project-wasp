@@ -8,6 +8,34 @@ import json
 from stw_calc import *
 import pandas as pd
 
+password = "password"
+
+class PasswordDialog:
+    def __init__(self, parent):
+        self.parent = parent
+        self.password = ""
+
+        self.top = tk.Toplevel(parent)
+        self.top.title("Enter password")
+
+        self.label = tk.Label(self.top, text="Enter password:")
+        self.label.pack(padx=10, pady=10)
+
+        self.entry = tk.Entry(self.top, show="*")
+        self.entry.pack(padx=10, pady=10)
+
+        self.button = tk.Button(self.top, text="OK", command=self.check_password)
+        self.button.pack(padx=10, pady=10)
+
+        self.top.bind("<Return>", lambda event: self.check_password())
+
+    def check_password(self):
+        self.password = self.entry.get()
+        if self.password == "password":
+            self.top.destroy()
+        else:
+            self.label.config(text="Incorrect password, try again.")
+
 def refresh():
     """Refresh the list of STWs."""
     STWS = []
@@ -68,13 +96,11 @@ def report(name):
     except:
         i_max = "Not Input"
 
-
     #trade eff flow
     try:
         e = data["TE"]
     except:
         e = "Not Input"
-  
 
     #per capita domestc flow 
     try:
@@ -87,6 +113,12 @@ def report(name):
         p = data["POPC"]
     except:
         p = "Not Input"
+    
+    #bod
+    try:
+        bod = data["BOD"]
+    except:
+        bod = "Not Input"
     
     old_pe = data["O_PE"]
     old_dwf = data["O_DWF"]
@@ -107,7 +139,7 @@ def report(name):
         dwf = "Could not calculate (need more metrics)"
 
     try:
-        pe = calculate_pe(fft)
+        pe = calculate_pe(bod, p)
     except:
         pe = "Could not calculate (need more metrics)"
 
@@ -316,7 +348,10 @@ def viewSTW(name):
 
 def updateSTW():
     """Updating an STWs Metrics"""
-    if messagebox.askyesno(title="Save Changes", message="Are you sure wish to update these metrics?\nResults for PE, FFT and DWF may change."):   
+    if messagebox.askyesno(title="Save Changes", message="Are you sure wish to update these metrics?\nResults for PE, FFT and DWF may change."):
+        password_dialog = PasswordDialog(root)
+        root.wait_window(password_dialog.top) 
+          
         info = { # Retrieve information.
             "name": nameVal.get(),
             "IDWF":idwfVal.get(),
