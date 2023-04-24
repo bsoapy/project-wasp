@@ -40,6 +40,7 @@ def callSTW(name):
         messagebox.showerror(title="Error Viewing STW", message="There was a problem loading this STW")
     return stw_data
 
+# Produce a popup to view the data of a selected STW
 def viewSTW(name):
     data = callSTW(name)
     if data == None: return None
@@ -81,6 +82,7 @@ def viewSTW(name):
     labelKnownPE = tk.Label(popup, text= "Published PE = "+str(data["O_PE"]), font=("Helvetica", 12, "bold"))
     labelKnownPE.grid(row=9, column=0, padx=10, pady=10)
 
+# Update the data of a selected STW
 def updateSTW(passphrase, nameVal, idwfVal, mirVal, tradeEffVal, perCapitaVal, popCatchVal, bodVal, known_fft, known_dwf, known_pe):
     if messagebox.askyesno(title="Save Changes", message="Are you sure wish to update these metrics?\nResults for PE, FFT and DWF may change.") and passphrase.get() == "password":
         info = { 
@@ -109,12 +111,12 @@ def updateSTW(passphrase, nameVal, idwfVal, mirVal, tradeEffVal, perCapitaVal, p
 
         for object in data:      
             if data[object]["name"] == name:
-                messagebox.showinfo(title="Updating Entry", message="This entry already exists,so the current STW's data will be updated.")
+                messagebox.showinfo(title="Updating Entry", message="The STW's data has been updated.")
                 data[object] = info
                 update = True
 
         if not update:
-            messagebox.showinfo(title="Adding Entry", message="This entry does not exist, so a new entry will be created.")
+            messagebox.showinfo(title="Adding Entry", message="STW name not found, a new entry has been created.\nPlease restart the application to view the new STW.")
             
             last_entry = int(list(data.keys())[-1])
             last_entry += 1
@@ -127,6 +129,7 @@ def updateSTW(passphrase, nameVal, idwfVal, mirVal, tradeEffVal, perCapitaVal, p
     else:
         return False
     
+# Create an Excel file to store the comparison of calculated and published values
 def saveToExcel(name, fft, dwf, pe, o_fft, o_dwf, o_pe):
     df = pd.DataFrame({"FFT": [fft], "DWF": [dwf], "PE": [pe], "Given FFT": [o_fft], "Given DWF": [o_dwf], "Given PE": [o_pe]})
 
@@ -137,6 +140,7 @@ def saveToExcel(name, fft, dwf, pe, o_fft, o_dwf, o_pe):
 
     return None
 
+# Generate a report for the selected STW comparing calculated and published values
 def generateReport(name):
     data = callSTW(name)
 
@@ -187,14 +191,14 @@ def generateReport(name):
     
     popup = tk.Toplevel(root)
     popup.resizable(True, True)
-    popup.geometry("500x200")
+    popup.geometry("600x200")
     popup.title(f"Report for {name}")
 
     # Create a Label for each calculate metric
     labelFFT = tk.Label(popup, text=f"Calculated FFT = {fft}", font=("Helvetica", 12, "bold"))
     labelFFT.grid(row=1, column=0, padx=10, pady=10)
 
-    labelDWF = tk.Label(popup, text=f"Calculated DWF = {dwf}", font=("Helvetica", 12, "bold"))
+    labelDWF = tk.Label(popup, text=f"{dwf}", font=("Helvetica", 12, "bold"))
     labelDWF.grid(row=2, column=0, padx=10, pady=10)
 
     labelPE = tk.Label(popup, text=f"Calculated PE = {pe}", font=("Helvetica", 12, "bold"))
@@ -214,6 +218,7 @@ def generateReport(name):
     saveBtn = tk.Button(popup, text="Save to Excel", command=lambda: saveToExcel(name, fft, dwf, pe, o_fft, o_dwf, o_pe))
     saveBtn.grid(row=4, column=0, padx=10, pady=10)
 
+# Update the entries in the GUI with the data for the selected STW
 def updateEntries(chosenSTW):
     data = callSTW(chosenSTW)
     nameVal.set(f"{data['name']}")
@@ -262,7 +267,7 @@ labelTitle.grid(row=0, column=0, columnspan=1, pady=(5,0))
 # Create Descriptor in Header widget
 desc_frame = tk.Frame(header_frame, width=200, height=50)
 desc_frame.grid(row=1, column=2, padx=(5,10), pady=10)
-labelDesc = tk.Label(desc_frame, text="This tool allows you to view and update metrics\nfor each STW and generate reports to validate\npublished PE, DWF and FFT figures. ", font=("Arial", 10), justify="left")
+labelDesc = tk.Label(desc_frame, text="This tool allows you to view and update metrics for each STW and\ngenerate reports to validate published PE and FFT figures.\nNote: we cannot accurately calculate DWF at this time.", font=("Arial", 10), justify="left")
 labelDesc.grid(row=1, column=0, columnspan=2, padx=15, pady=(5,0))
 
 _blank = tk.Label(root, text="- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -", font=("Arial", 14))
@@ -286,6 +291,7 @@ labelSelect.grid(row=0, column=0, padx=0, pady=5)
 selectSTW = tk.OptionMenu(selector_frame, chosenSTW, *stws, command=lambda x:updateEntries(chosenSTW.get()))
 selectSTW.grid(row=0, column=1, padx=(0,5), pady=5)
 
+
 # Create View Button in Body widget
 view_btn_frame = tk.Frame(body_frame, width=100, height=30)
 view_btn_frame.grid(row=1, column=2, padx=(5,5), pady=10)
@@ -293,7 +299,7 @@ view_btn = tk.Button(view_btn_frame, text="View Statistics", command=lambda: vie
 view_btn.grid(row=0, column=0, padx=5, pady=5)
 viewTip = tk.Button(view_btn_frame, text="?", state="disabled")
 viewTip.grid(row=0, column=1, padx=5)
-view_ttp = Hovertip(viewTip, "This button shows the current statistics for the selected STW.")
+view_ttp = Hovertip(viewTip, "This button opens a window containing the most\nup-to-date statistics for the selected STW. The\nfields below also contain these statistics.")
 
 # Create Report Button in Body widget
 report_btn_frame = tk.Frame(body_frame, width=100, height=30)
@@ -319,25 +325,25 @@ nameEntry = tk.Entry(edit_frame_1, textvariable=nameVal)
 nameEntry.grid(row=0, column=1)
 
 idwfVal = StringVar(edit_frame_1)
-idwfLabel = tk.Label(edit_frame_1, text="IDWF:", font=("Arial", 11), justify="left")
+idwfLabel = tk.Label(edit_frame_1, text="IDWF (I/d):", font=("Arial", 11), justify="left")
 idwfLabel.grid(row=1, column=0)
 idwfEntry = tk.Entry(edit_frame_1, textvariable=idwfVal)
 idwfEntry.grid(row=1, column=1)
 
 mirVal = StringVar(edit_frame_1)
-mirLabel = tk.Label(edit_frame_1, text="Max Infiltration Rate:", font=("Arial", 11), justify="left")
+mirLabel = tk.Label(edit_frame_1, text="Max Infiltration Rate (I/d):", font=("Arial", 11), justify="left")
 mirLabel.grid(row=2, column=0)
 mirEntry = tk.Entry(edit_frame_1, textvariable=mirVal)
 mirEntry.grid(row=2, column=1)
 
 tradeEffVal = StringVar(edit_frame_1)
-tradeEffLabel = tk.Label(edit_frame_1, text="Trade Effluent:", font=("Arial", 11), justify="left")
+tradeEffLabel = tk.Label(edit_frame_1, text="Trade Effluent (I/d):", font=("Arial", 11), justify="left")
 tradeEffLabel.grid(row=3, column=0)
 tradeEffEntry = tk.Entry(edit_frame_1, textvariable=tradeEffVal)
 tradeEffEntry.grid(row=3, column=1)
 
 perCapitaVal = StringVar(edit_frame_1)
-perCapitaLabel = tk.Label(edit_frame_1, text="Per Capita Domestic Flow:", font=("Arial", 11), justify="left")
+perCapitaLabel = tk.Label(edit_frame_1, text="Per Capita Domestic Flow (I/d):", font=("Arial", 11), justify="left")
 perCapitaLabel.grid(row=4, column=0)
 perCapitaEntry = tk.Entry(edit_frame_1, textvariable=perCapitaVal)
 perCapitaEntry.grid(row=4, column=1)
@@ -359,13 +365,13 @@ bodEntry = tk.Entry(edit_frame_2, textvariable=bodVal)
 bodEntry.grid(row=6, column=1)
 
 known_fft = StringVar(edit_frame_2)
-known_fftLabel = tk.Label(edit_frame_2, text="Published FFT:", font=("Arial", 11), justify="left")
+known_fftLabel = tk.Label(edit_frame_2, text="Published FFT (I/s):", font=("Arial", 11), justify="left")
 known_fftLabel.grid(row=7, column=0)
 known_fftEntry = tk.Entry(edit_frame_2, textvariable=known_fft)
 known_fftEntry.grid(row=7, column=1)
 
 known_dwf = StringVar(edit_frame_2)
-known_dwfLabel = tk.Label(edit_frame_2, text="Published DWF:", font=("Arial", 11), justify="left")
+known_dwfLabel = tk.Label(edit_frame_2, text="Published DWF (I/d):", font=("Arial", 11), justify="left")
 known_dwfLabel.grid(row=8, column=0)
 known_dwfEntry = tk.Entry(edit_frame_2, textvariable=known_dwf)
 known_dwfEntry.grid(row=8, column=1)
