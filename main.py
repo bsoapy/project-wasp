@@ -1,371 +1,101 @@
-# Modules
 import tkinter as tk
-from tkinter import messagebox
-from tkinter import StringVar
-import traceback
+from tkinter import messagebox, StringVar
 import os
 import json
-from stw_calc import *
 import pandas as pd
+from idlelib.tooltip import Hovertip
+from formulae import *
 
-password = "password"
+from formulae import *
 
-class PasswordDialog:
-    def __init__(self, parent):
-        self.parent = parent
-        self.password = ""
 
-        self.top = tk.Toplevel(parent)
-        self.top.title("Enter password")
+# =====================================================================================================================================================================================
+# FUNCTIONS
+# =====================================================================================================================================================================================
 
-        self.label = tk.Label(self.top, text="Enter password:")
-        self.label.pack(padx=10, pady=10)
-
-        self.entry = tk.Entry(self.top, show="*")
-        self.entry.pack(padx=10, pady=10)
-
-        self.button = tk.Button(self.top, text="OK", command=self.check_password)
-        self.button.pack(padx=10, pady=10)
-
-        self.top.bind("<Return>", lambda event: self.check_password())
-
-    def check_password(self):
-        self.password = self.entry.get()
-        if self.password == "password":
-            self.top.destroy()
-        else:
-            self.label.config(text="Incorrect password, try again.")
-
+# Refresh the status of STWs
 def refresh():
-    """Refresh the list of STWs."""
-    STWS = []
-    data = json.load(open('stw_data.json'))
+    stws = []
+    data = json.load(open("stw_data.json"))
     for i in data:
-        STWS.append(data[i]["name"])
+        stws.append(data[i]["name"])
 
-#load STW data from JSON file
-data = json.load(open('stw_data.json'))
-global  STWS
-STWS = []
-refresh()
-
-
-for i in data:
-    STWS.append(data[i]["name"])
-
+# Closes the program
 def quitProg():
-    """Quitting the program."""
-    if messagebox.askyesno(title="Quit Program", message="Are you sure wish to quit?\nUnsaved changes will be lost."):   
+    if messagebox.askyesno(title="Quit", message="Are you sure you want to quit?\nUnsaved changes will be lost."):
         root.quit()
-        print("Program closed...")
         os.sys.exit()
     else:
         return False
 
-def recallSTW(name):
-    #get all vaues for the STW from JSON file
-    data = json.load(open('stw_data.json'))
-    STW_data = {}
+# Retrieve the data of a selected STW
+def callSTW(name):
+    data = json.load(open("stw_data.json"))
+    stw_data = {}
     for i in data:
-        
         if data[i]["name"] == name:
-            STW_data = data[i]
+            stw_data = data[i]
             break
+    if stw_data == {}:
+        messagebox.showerror(title="Error Viewing STW", message="There was a problem loading this STW")
+    return stw_data
 
-    if STW_data == {}:
-        messagebox.showerror(title="Error Viewing STW", message="Sorry, there was a problem loading this STW.")
-        return None
-    
-    return STW_data
-    
-def report(name):
-    #get data from JSON file with STW name
-    data = recallSTW(name)
+def viewSTW(name):
+    data = callSTW(name)
+    if data == None: return None
 
-    #load data into seperate variables 
-
-    #dry weather infiltration
-    try:
-        i_dwf = data["IDWF"]
-    except:
-        i_dwf = "Not Input"
-
-    #max infiltration rate
-    try:
-        i_max = data["MIR"]
-    except:
-        i_max = "Not Input"
-
-    #trade eff flow
-    try:
-        e = data["TE"]
-    except:
-        e = "Not Input"
-
-    #per capita domestc flow 
-    try:
-        g = data["PCDF"]
-    except:
-        g = "Not Input"
-
-    #catchment population
-    try:
-        p = data["POPC"]
-    except:
-        p = "Not Input"
-    
-    #bod
-    try:
-        bod = data["BOD"]
-    except:
-        bod = "Not Input"
-    
-    old_pe = data["O_PE"]
-    old_dwf = data["O_DWF"]
-    old_fft = data["O_FFT"]
-
-    
-
-    #calculate the values
-    try:
-        fft = calculate_fft(p,g,i_max,e)
-
-    except:
-        fft = "Could not calculate (need more metrics)"
-
-    try:
-        dwf = calculate_dwf(p,g,i_dwf,e)
-    except:
-        dwf = "Could not calculate (need more metrics)"
-
-    try:
-        pe = calculate_pe(bod, p)
-    except:
-        pe = "Could not calculate (need more metrics)"
-
-
-    
-
-        
-
-    #create a popup that displays the values, the old values and the difference
-
-    #it should also have a save to excel bustton
+    # =====================================================================================================================================================================================
+    # POPUP TO DISPLAY STORED METRICS
+    # =====================================================================================================================================================================================
 
     popup = tk.Toplevel(root)
     popup.resizable(True, True)
-    width=600
-    height=350
-    popup.geometry(f"{width}x{height}") # Window size.
-    popup.title(f"Report for {name}") # Window title.
+    popup.geometry("400x400")
+    popup.title(f"Viewing {name}")
 
-    #create a label for each metric
-    labelFFT = tk.Label(popup,
-                        text="Calculated FFT",
-                        font=("Helvetica", 12, "bold"))
-    labelFFT.grid(row=1, column=0, padx=10, pady=10)
-
-    labelDWF = tk.Label(popup,
-                        text="Calculated DWF",
-                        font=("Helvetica", 12, "bold"))
-    labelDWF.grid(row=2, column=0, padx=10, pady=10)
-
-    labelPE = tk.Label(popup,
-                        text="Calculated PE",
-                        font=("Helvetica", 12, "bold"))
-    labelPE.grid(row=3, column=0, padx=10, pady=10)
-
-    #create a label for each old value
-    labelOldFFT = tk.Label(popup,
-                        text="FFT Provided",
-                        font=("Helvetica", 12, "bold"))
-    labelOldFFT.grid(row=1, column=2, padx=10, pady=10)
-
-    labelOldDWF = tk.Label(popup,
-                        text="DWF Provided",
-                        font=("Helvetica", 12, "bold"))
-    labelOldDWF.grid(row=2, column=2, padx=10, pady=10)
-
-    labelOldPE = tk.Label(popup,
-                        text="PE Provided",
-                        font=("Helvetica", 12, "bold"))
-    labelOldPE.grid(row=3, column=2, padx=10, pady=10)
-
-
-    #create a label for each value
-    labelFFTValue = tk.Label(popup,
-                        text=fft,
-                        font=("Helvetica", 12, "bold"))
-    labelFFTValue.grid(row=1, column=1, padx=10, pady=10)
-    
-    labelDWFValue = tk.Label(popup,
-                        text=dwf,
-                        font=("Helvetica", 12, "bold"))
-    labelDWFValue.grid(row=2, column=1, padx=10, pady=10)
-
-    labelPEValue = tk.Label(popup,
-                        text=pe,
-
-                        font=("Helvetica", 12, "bold"))
-    
-    labelPEValue.grid(row=3, column=1, padx=10, pady=10)
-
-    #create a label for each old value
-    labelOldFFTValue = tk.Label(popup,
-                        text=old_fft,
-                        font=("Helvetica", 12, "bold"))
-    labelOldFFTValue.grid(row=1, column=3, padx=10, pady=10)
-
-    labelOldDWFValue = tk.Label(popup,
-                        text=old_dwf,
-                        font=("Helvetica", 12, "bold"))
-
-    labelOldDWFValue.grid(row=2, column=3, padx=10, pady=10)
-
-    labelOldPEValue = tk.Label(popup,
-                        text=old_pe,
-                        font=("Helvetica", 12, "bold"))
-    labelOldPEValue.grid(row=3, column=3, padx=10, pady=10)
-
-    #create a button to save to excel
-    saveButton = tk.Button(popup,
-                        text="Save to Excel",
-                        font=("Helvetica", 12, "bold"),
-                        command=lambda: saveToExcel(name, fft, dwf, pe, old_fft, old_dwf, old_pe))
-    saveButton.grid(row=4, column=0, padx=10, pady=10)
-
-def saveToExcel(name, fft, dwf, pe, old_fft, old_dwf, old_pe):
-    #create pandas dataframe with the values, save it to a excel file, if successful, show a message box
-    df = pd.DataFrame({"FFT": [fft], "DWF": [dwf], "PE": [pe], "Given FFT": [old_fft], "Given DWF": [old_dwf], "Given PE": [old_pe]})
-    #remove index
-    
-    try:
-        df.to_excel(f"{name}.xlsx", index=False)
-        # An info box to indicate the report has been saved.
-        messagebox.showinfo(title="Success", message="Saved to Excel")
-    except:
-        # An error box to indicate the report was not able to save.
-        messagebox.showerror(title="Error", message="Sorry, there was a problem saving to Excel")
-
-    return None
-    
-def viewSTW(name):
-    """Viewing an STWs Metrics"""
-    #Create a new window that displays the STW's metrics.
-    viewWindow = tk.Toplevel(root)
-    viewWindow.resizable(True, True)
-    width=300
-    height=400
-    viewWindow.geometry(f"{width}x{height}") # Window size.
-    viewWindow.title(f"Viewing {name}") # Window title.
-
-    STW_data = recallSTW(name)
-
-    if STW_data == None: return None
-
-    #create a label for each metric
-    labelIDWF = tk.Label(viewWindow,
-                        text="IDWF (I/d)",
-                        font=("Helvetica", 12, "bold"))
+    # Create a Label for each stored metric
+    labelIDWF = tk.Label(popup, text="IDWF (I/d) = "+str(data["IDWF"]), font=("Helvetica", 12, "bold"))
     labelIDWF.grid(row=1, column=0, padx=10, pady=10)
-    #thus each label has a corresponding text box.
-    labelMIR = tk.Label(viewWindow,
-                        text="Max Infiltration Rate (I/d)",
-                        font=("Helvetica", 12, "bold"))
+
+    labelMIR = tk.Label(popup, text="Max Infiltration Rate (I/d) = "+str(data["MIR"]), font=("Helvetica", 12, "bold"))
     labelMIR.grid(row=2, column=0, padx=10, pady=10)
 
-    labelTE = tk.Label(viewWindow,
-                        text="Trade Effluent (I/d)",
-                        font=("Helvetica", 12, "bold"))
+    labelTE = tk.Label(popup, text="Trade Effluent (I/d) = "+str(data["TE"]), font=("Helvetica", 12, "bold"))
     labelTE.grid(row=3, column=0, padx=10, pady=10)
 
-    labelPCDF = tk.Label(viewWindow,
-                        text="Per Capita Domestic Flow (I/d)",
-                        font=("Helvetica", 12, "bold"))
+    labelPCDF = tk.Label(popup, text="Per Capita Domestic Flow (I/d) = "+str(data["PCDF"]), font=("Helvetica", 12, "bold"))
     labelPCDF.grid(row=4, column=0, padx=10, pady=10)
 
-    labelPC = tk.Label(viewWindow,
-                        text="Population Catchment",
-                        font=("Helvetica", 12, "bold"))
-
+    labelPC = tk.Label(popup, text="Population Catchment = "+str(data["POPC"]), font=("Helvetica", 12, "bold"))
     labelPC.grid(row=5, column=0, padx=10, pady=10)
 
-    labelBOD = tk.Label(viewWindow, text= "BOD", font=("Helvetica", 12, "bold"))
-
+    labelBOD = tk.Label(popup, text= "BOD = "+str(data["BOD"]), font=("Helvetica", 12, "bold"))
     labelBOD.grid(row=6, column=0, padx=10, pady=10)
 
-    labelKnownFFT = tk.Label(viewWindow, text= "Published FFT (I/s)", font=("Helvetica", 12, "bold"))
-
+    labelKnownFFT = tk.Label(popup, text= "Published FFT (I/s) = "+str(data["O_FFT"]), font=("Helvetica", 12, "bold"))
     labelKnownFFT.grid(row=7, column=0, padx=10, pady=10)
 
-    labelKnownDWF = tk.Label(viewWindow, text= "Published DWF (I/d)", font=("Helvetica", 12, "bold"))
-
+    labelKnownDWF = tk.Label(popup, text= "Published DWF (I/d) = "+str(data["O_DWF"]), font=("Helvetica", 12, "bold"))
     labelKnownDWF.grid(row=8, column=0, padx=10, pady=10)
 
-    labelKnownPE = tk.Label(viewWindow, text= "Published PE", font=("Helvetica", 12, "bold"))
-
+    labelKnownPE = tk.Label(popup, text= "Published PE = "+str(data["O_PE"]), font=("Helvetica", 12, "bold"))
     labelKnownPE.grid(row=9, column=0, padx=10, pady=10)
 
-
-    #put in data next to each metric - make them text labels
-    idwfVal = tk.Label(viewWindow, text=STW_data["IDWF"], font=("Helvetica", 12))
-    idwfVal.grid(row=1, column=1, padx=10, pady=10)
-
-    mirVal = tk.Label(viewWindow, text=STW_data["MIR"], font=("Helvetica", 12))
-    mirVal.grid(row=2, column=1, padx=10, pady=10)
-
-    tradeEffVal = tk.Label(viewWindow, text=STW_data["TE"], font=("Helvetica", 12))
-    tradeEffVal.grid(row=3, column=1, padx=10, pady=10)
-
-    perCapitaVal = tk.Label(viewWindow, text=STW_data["PCDF"], font=("Helvetica", 12))
-    perCapitaVal.grid(row=4, column=1, padx=10, pady=10)
-
-    popCatchVal = tk.Label(viewWindow, text=STW_data["POPC"], font=("Helvetica", 12))
-    popCatchVal.grid(row=5, column=1, padx=10, pady=10)   
-
-
-    bodVal = tk.Label(viewWindow, text=STW_data["BOD"], font=("Helvetica", 12))
-
-    bodVal.grid(row=6, column=1, padx=10, pady=10)
-
-    known_fft = tk.Label(viewWindow, text=STW_data["O_FFT"], font=("Helvetica", 12))
-
-    known_fft.grid(row=7, column=1, padx=10, pady=10)
-
-    known_dwf = tk.Label(viewWindow, text=STW_data["O_DWF"], font=("Helvetica", 12))
-
-    known_dwf.grid(row=8, column=1, padx=10, pady=10)
-
-    known_pe = tk.Label(viewWindow, text=STW_data["O_PE"], font=("Helvetica", 12))
-
-    known_pe.grid(row=9, column=1, padx=10, pady=10)
-
-    
-
-
-               
-    #Show all the metrics for a the STW
-
-def updateSTW():
-    """Updating an STWs Metrics"""
-    if messagebox.askyesno(title="Save Changes", message="Are you sure wish to update these metrics?\nResults for PE, FFT and DWF may change."):
-        password_dialog = PasswordDialog(root)
-        root.wait_window(password_dialog.top) 
-          
-        info = { # Retrieve information.
+def updateSTW(passphrase, nameVal, idwfVal, mirVal, tradeEffVal, perCapitaVal, popCatchVal, bodVal, known_fft, known_dwf, known_pe):
+    if messagebox.askyesno(title="Save Changes", message="Are you sure wish to update these metrics?\nResults for PE, FFT and DWF may change.") and passphrase.get() == "password":
+        info = { 
             "name": nameVal.get(),
             "IDWF":idwfVal.get(),
             "MIR":mirVal.get(),
             "TE":tradeEffVal.get(),
-            "PCDF:":perCapitaVal.get(),
-            "POPC:":popCatchVal.get(),
+            "PCDF":perCapitaVal.get(),
+            "POPC":popCatchVal.get(),
             "BOD":bodVal.get(),
             "O_FFT":known_fft.get(),
             "O_DWF":known_dwf.get(),
             "O_PE":known_pe.get(),
         }
         
-        #check if any values are empty
         for value in info.values():
             if value == "" or value == " ":
                 messagebox.showerror(title="Error", message="Please fill in all the fields. (With correct values)")
@@ -375,215 +105,329 @@ def updateSTW():
 
         with open("STW_data.json", "r") as f:
             data = json.load(f)
-        #update the data
         update = False
+
         for object in data:      
             if data[object]["name"] == name:
                 messagebox.showinfo(title="Updating Entry", message="This entry already exists,so the current STW's data will be updated.")
-
                 data[object] = info
                 update = True
+
         if not update:
             messagebox.showinfo(title="Adding Entry", message="This entry does not exist, so a new entry will be created.")
             
             last_entry = int(list(data.keys())[-1])
             last_entry += 1
             data[str(last_entry)] = info
-            
-        #save the data
+
         with open("STW_data.json", "w") as f:
             json.dump(data, f, indent=4)
+    elif passphrase.get() != "password":
+        messagebox.showerror(title="Error", message="Incorrect passphrase")
     else:
         return False
+    
+def saveToExcel(name, fft, dwf, pe, o_fft, o_dwf, o_pe):
+    df = pd.DataFrame({"FFT": [fft], "DWF": [dwf], "PE": [pe], "Given FFT": [o_fft], "Given DWF": [o_dwf], "Given PE": [o_pe]})
 
-root = tk.Tk() # 
+    try:
+        df.to_excel(f"{name}.xlsx", index=False)
+        messagebox.showinfo(title="Success", message="Saved to Excel")
+    except: messagebox.showerror(title="Error", message="Sorry, there was a problem saving to Excel")
+
+    return None
+
+def generateReport(name):
+    data = callSTW(name)
+
+    # Retrieve data to be used for calculations
+    try: i_dwf = float(data["IDWF"])
+    except: i_dwf = "No Input"
+
+    try: i_max = float(data["MIR"])
+    except: i_max = "No Input"
+
+    try: e = float(data["TE"])
+    except: e = "No Input"
+
+    try: g = float(data["PCDF"])
+    except: g = "No Input"
+
+    try: p = float(data["POPC"])
+    except: p = "No Input"
+
+    try: bod = float(data["BOD"])
+    except: bod = "No Input"
+
+    o_pe = data["O_PE"]
+    o_dwf = data["O_DWF"]
+    o_fft = data["O_FFT"]
+
+  
+
+    # Calculate PE, DWF and FFT
+    try: 
+        fft = calculate_fft(p,g,i_max,e)
+    except: 
+        fft = "Could not calculate (need more metrics)"
+
+    try: 
+        dwf = calculate_dwf(p,g,i_dwf,e)
+    except: 
+        dwf = "Could not calculate (need more metrics)"
+
+    try: 
+        pe = calculate_pe(bod, p)
+    except: 
+        pe = "Could not calculate (need more metrics)"
+    
+    # =====================================================================================================================================================================================
+    # POPUP TO DISPLAY PUBLISHED AND CALCULATED METRICS
+    # =====================================================================================================================================================================================
+    
+    popup = tk.Toplevel(root)
+    popup.resizable(True, True)
+    popup.geometry("500x200")
+    popup.title(f"Report for {name}")
+
+    # Create a Label for each calculate metric
+    labelFFT = tk.Label(popup, text=f"Calculated FFT = {fft}", font=("Helvetica", 12, "bold"))
+    labelFFT.grid(row=1, column=0, padx=10, pady=10)
+
+    labelDWF = tk.Label(popup, text=f"Calculated DWF = {dwf}", font=("Helvetica", 12, "bold"))
+    labelDWF.grid(row=2, column=0, padx=10, pady=10)
+
+    labelPE = tk.Label(popup, text=f"Calculated PE = {pe}", font=("Helvetica", 12, "bold"))
+    labelPE.grid(row=3, column=0, padx=10, pady=10)
+
+    # Create a Label for each published metric
+    labelOldFFT = tk.Label(popup, text=f"FFT Published = {o_fft}", font=("Helvetica", 12, "bold"))
+    labelOldFFT.grid(row=1, column=2, padx=10, pady=10)
+
+    labelOldDWF = tk.Label(popup, text=f"DWF Published = {o_dwf}", font=("Helvetica", 12, "bold"))
+    labelOldDWF.grid(row=2, column=2, padx=10, pady=10)
+
+    labelOldPE = tk.Label(popup, text=f"PE Published = {o_pe}", font=("Helvetica", 12, "bold"))
+    labelOldPE.grid(row=3, column=2, padx=10, pady=10)
+
+    # Create a button to save to Excel
+    saveBtn = tk.Button(popup, text="Save to Excel", command=lambda: saveToExcel(name, fft, dwf, pe, o_fft, o_dwf, o_pe))
+    saveBtn.grid(row=4, column=0, padx=10, pady=10)
+
+def updateEntries(chosenSTW):
+    data = callSTW(chosenSTW)
+    nameVal.set(f"{data['name']}")
+    idwfVal.set(f"{data['IDWF']}")
+    mirVal.set(f"{data['MIR']}")
+    tradeEffVal.set(f"{data['TE']}")
+    perCapitaVal.set(f"{data['PCDF']}")
+    popCatchVal.set(f"{data['POPC']}")
+    bodVal.set(f"{data['BOD']}")
+    known_fft.set(f"{data['O_FFT']}")
+    known_dwf.set(f"{data['O_DWF']}")
+    known_pe.set(f"{data['O_PE']}")
+
+# =====================================================================================================================================================================================
+# LOAD STW DATA
+# =====================================================================================================================================================================================
+
+data = json.load(open("stw_data.json"))
+stws = []
+refresh()
+for i in data:
+    stws.append(data[i]["name"])
+
+# =====================================================================================================================================================================================
+# ROOT WINDOW
+# =====================================================================================================================================================================================
+
+root = tk.Tk() # create root window
 root.resizable(True, True)
-width=665
-height=750
-root.geometry(f"{width}x{height}") # Window size.
-root.title("WASP Statistic Tool") # Window title.
-# Title of the software tool.
-labelTitle = tk.Label(root,
-                 text="WASP Statistic Tool",
-                 anchor="nw",
-                 font=("Helvetica", 36, "bold"))
-labelTitle.grid(row=0, column=0, columnspan=2, pady=15)
+root.title("SoftEng Project")
 
-# Description of the software tool.
-labelDesc = tk.Label(root,
-                text="Designed by Ben Sohanpal, Alex Read, Tony Dalziel, Jeremy Roy, Maksim Sics, Yosef Berezovskiy",
-                font=("Helvetica", 14))
-labelDesc.grid(row=1, column=0, columnspan=2, padx=15, pady=10)
+# =====================================================================================================================================================================================
+# HEADER SECTION
+# =====================================================================================================================================================================================
 
-""" BUTTONS & FUNCTIONALITY """
-rightPanel = tk.Frame(root)
-rightPanel.grid(row=2, column=0)
+# Create Header widget
+header_frame = tk.Frame(root, width=400, height=100)
+header_frame.grid(row=1, column=0, padx=10, pady=(5,0))
 
-# Label to for STW drop down.
-STWlabel = tk.Label(rightPanel,
-                    text="Select a loaded STW:",
-                    font=("Helvetica", 14, "bold"))
-STWlabel.grid(row=0, column=0)
+# Create Title in Header widget
+title_frame = tk.Frame(header_frame, width=170, height=50)
+title_frame.grid(row=1, column=1, padx=(10,5), pady=10)
+labelTitle = tk.Label(title_frame, text="WASP TOOL", font=("Arial", 28, "bold"))
+labelTitle.grid(row=0, column=0, columnspan=1, pady=(5,0))
 
-# STW Dropdown list.
-chosenSTW = StringVar(rightPanel) # Default & selected STW.
-chosenSTW.set(STWS[0])
-STWdropdown = tk.OptionMenu(rightPanel, chosenSTW, *STWS)
-STWdropdown.grid(row=1, column=0)
+# Create Descriptor in Header widget
+desc_frame = tk.Frame(header_frame, width=200, height=50)
+desc_frame.grid(row=1, column=2, padx=(5,10), pady=10)
+labelDesc = tk.Label(desc_frame, text="This tool allows you to view and update metrics\nfor each STW and generate reports to validate\npublished PE, DWF and FFT figures. ", font=("Arial", 10), justify="left")
+labelDesc.grid(row=1, column=0, columnspan=2, padx=15, pady=(5,0))
 
-#create a refresj button next to it 
-refreshButton = tk.Button(rightPanel, text="Refresh", command=lambda: refresh())
-
-# Simply a line break
-_blank = tk.Label(rightPanel,
-                  text="-------------------------------",
-                  font=("Helvetica", 14))
+_blank = tk.Label(root, text="- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -", font=("Arial", 14))
 _blank.grid(row=2, column=0)
 
-# View STW button.
-viewButton = tk.Button(rightPanel, text="View STW", command=lambda: viewSTW(chosenSTW.get()))
-viewButton.grid(row=3, column=0)
+# =====================================================================================================================================================================================
+# BODY SECTION
+# =====================================================================================================================================================================================
 
-# Generate report button.
-reportButton = tk.Button(rightPanel, text="Generate Report", command=lambda: report(chosenSTW.get()))
-reportButton.grid(row=4, column=0)
+# Create Body widget
+body_frame = tk.Frame(root, width=400, height=300)
+body_frame.grid(row=3, column=0, padx=10, pady=0)
 
-_blank = tk.Label(rightPanel,
-                  text="-------------------------------",
-                  font=("Helvetica", 14))
-_blank.grid(row=5, column=0)
+# Create Selector in Body widget
+selector_frame = tk.Frame(body_frame, width=160, height=30)
+selector_frame.grid(row=1, column=1, padx=(10,5), pady=10)
+chosenSTW = StringVar(selector_frame)
+chosenSTW.set(stws[0])
+labelSelect = tk.Label(selector_frame, text="Select a STW: ", font=("Arial", 11, "bold"))
+labelSelect.grid(row=0, column=0, padx=0, pady=5)
+selectSTW = tk.OptionMenu(selector_frame, chosenSTW, *stws, command=lambda x:updateEntries(chosenSTW.get()))
+selectSTW.grid(row=0, column=1, padx=(0,5), pady=5)
 
-# Label to show editing metrics.
-STWlabel = tk.Label(rightPanel,
-                    text="Edit STW metrics:",
-                    font=("Helvetica", 14, "bold"))
-STWlabel.grid(row=6, column=0)
+# Create View Button in Body widget
+view_btn_frame = tk.Frame(body_frame, width=100, height=30)
+view_btn_frame.grid(row=1, column=2, padx=(5,5), pady=10)
+view_btn = tk.Button(view_btn_frame, text="View Statistics", command=lambda: viewSTW(chosenSTW.get()))
+view_btn.grid(row=0, column=0, padx=5, pady=5)
+viewTip = tk.Button(view_btn_frame, text="?", state="disabled")
+viewTip.grid(row=0, column=1, padx=5)
+view_ttp = Hovertip(viewTip, "This button shows the current statistics for the selected STW.")
 
-# A sub panel to house metrics
-metricPanel = tk.Frame(rightPanel)
-metricPanel.grid(row=7, column=0)
+# Create Report Button in Body widget
+report_btn_frame = tk.Frame(body_frame, width=100, height=30)
+report_btn_frame.grid(row=1, column=3, padx=(5,10), pady=10)
+report_btn = tk.Button(report_btn_frame, text="Generate Report", command=lambda: generateReport(chosenSTW.get()))
+report_btn.grid(row=0, column=0, padx=5, pady=5)
+reportTip = tk.Button(report_btn_frame, text="?", state="disabled")
+reportTip.grid(row=0, column=1, padx=5)
+report_ttp = Hovertip(reportTip, "This button generates a report that compares the published PE, DWF\nand FFT figures with raw data for the selected STW.")
 
-""" Edit metrics """
-nameVal = StringVar(metricPanel)
-nameVal.set("Example STW")
-nameLbl = tk.Label(metricPanel,
-    text="Name:",
-    font=("Helvetica", 14, "bold"))
+# Create Edit widget
+edit_frame = tk.Frame(root, width=400, height=300)
+edit_frame.grid(row=4, column=0, padx=10, pady=0)
+
+# Create first columns for Edit entries in Edit widget
+edit_frame_1 = tk.Frame(edit_frame, width=185, height=150)
+edit_frame_1.grid(row=0, column=1, padx=(10,5), pady=5)
+
+nameVal = StringVar(edit_frame_1)
+nameLbl = tk.Label(edit_frame_1,text="Name:",font=("Arial", 11), justify="left")
 nameLbl.grid(row=0, column=0)
-nameEntry = tk.Entry(metricPanel, textvariable=nameVal)
+nameEntry = tk.Entry(edit_frame_1, textvariable=nameVal)
 nameEntry.grid(row=0, column=1)
-# A text and label widget for the name of the STW.
 
-
-idwfVal = StringVar(metricPanel)
-idwfVal.set("")
-idwfLabel = tk.Label(metricPanel,
-    text="IDWF:",
-    font=("Helvetica", 14, "bold"))
+idwfVal = StringVar(edit_frame_1)
+idwfLabel = tk.Label(edit_frame_1, text="IDWF:", font=("Arial", 11), justify="left")
 idwfLabel.grid(row=1, column=0)
-idwfEntry = tk.Entry(metricPanel, textvariable=idwfVal)
+idwfEntry = tk.Entry(edit_frame_1, textvariable=idwfVal)
 idwfEntry.grid(row=1, column=1)
-# A text and label widget for the 'idwf' of the STW.
 
-
-mirVal = StringVar(metricPanel)
-mirVal.set("")
-mirLabel = tk.Label(metricPanel,
-    text="Max Infiltration Rate:",
-    font=("Helvetica", 14, "bold"))
+mirVal = StringVar(edit_frame_1)
+mirLabel = tk.Label(edit_frame_1, text="Max Infiltration Rate:", font=("Arial", 11), justify="left")
 mirLabel.grid(row=2, column=0)
-mirEntry = tk.Entry(metricPanel, textvariable=mirVal)
+mirEntry = tk.Entry(edit_frame_1, textvariable=mirVal)
 mirEntry.grid(row=2, column=1)
-# A text and label widget for the 'mir' of the STW.
 
-
-tradeEffVal = StringVar(metricPanel)
-tradeEffVal.set("")
-tradeEffLabel = tk.Label(metricPanel,
-    text="Trade Effluent:",
-    font=("Helvetica", 14, "bold"))
+tradeEffVal = StringVar(edit_frame_1)
+tradeEffLabel = tk.Label(edit_frame_1, text="Trade Effluent:", font=("Arial", 11), justify="left")
 tradeEffLabel.grid(row=3, column=0)
-tradeEffEntry = tk.Entry(metricPanel, textvariable=tradeEffVal)
+tradeEffEntry = tk.Entry(edit_frame_1, textvariable=tradeEffVal)
 tradeEffEntry.grid(row=3, column=1)
-# A text and label widget for the 'trade effluent' of the STW.
 
-
-perCapitaVal = StringVar(metricPanel)
-perCapitaVal.set("")
-perCapitaLabel = tk.Label(metricPanel,
-    text="Per Capita Domestic Flow:",
-    font=("Helvetica", 14, "bold"))
+perCapitaVal = StringVar(edit_frame_1)
+perCapitaLabel = tk.Label(edit_frame_1, text="Per Capita Domestic Flow:", font=("Arial", 11), justify="left")
 perCapitaLabel.grid(row=4, column=0)
-perCapitaEntry = tk.Entry(metricPanel, textvariable=perCapitaVal)
+perCapitaEntry = tk.Entry(edit_frame_1, textvariable=perCapitaVal)
 perCapitaEntry.grid(row=4, column=1)
-# A text and label widget for the 'per capita domestic flow' of the STW.
 
+# Create second columns for Edit entries in Edit widget
+edit_frame_2 = tk.Frame(edit_frame, width=185, height=150,)
+edit_frame_2.grid(row=0, column=2, padx=(5,10), pady=5)
 
-popCatchVal = StringVar(metricPanel)
-popCatchVal.set("")
-popCatchLabel = tk.Label(metricPanel,
-    text="Population Catchment:",
-    font=("Helvetica", 14, "bold"))
+popCatchVal = StringVar(edit_frame_2)
+popCatchLabel = tk.Label(edit_frame_2, text="Population Catchment:", font=("Arial", 11), justify="left")
 popCatchLabel.grid(row=5, column=0)
-popCatchEntry = tk.Entry(metricPanel, textvariable=popCatchVal)
+popCatchEntry = tk.Entry(edit_frame_2, textvariable=popCatchVal)
 popCatchEntry.grid(row=5, column=1)
-# A text and label widget for the 'population catchment' of the STW.
 
-
-bodVal = StringVar(metricPanel)
-bodVal.set("")
-bodLabel = tk.Label(metricPanel,
-    text="BOD:",
-    font=("Helvetica", 14, "bold"))
+bodVal = StringVar(edit_frame_2)
+bodLabel = tk.Label(edit_frame_2, text="BOD:", font=("Arial", 11), justify="left")
 bodLabel.grid(row=6, column=0)
-bodEntry = tk.Entry(metricPanel, textvariable=bodVal)
+bodEntry = tk.Entry(edit_frame_2, textvariable=bodVal)
 bodEntry.grid(row=6, column=1)
-# A text and label widget for the 'bod' of the STW.
 
-
-known_fft = StringVar(metricPanel)
-known_fft.set("")
-known_fftLabel = tk.Label(metricPanel,
-    text="Known FFT:",
-    font=("Helvetica", 14, "bold"))
+known_fft = StringVar(edit_frame_2)
+known_fftLabel = tk.Label(edit_frame_2, text="Published FFT:", font=("Arial", 11), justify="left")
 known_fftLabel.grid(row=7, column=0)
-known_fftEntry = tk.Entry(metricPanel, textvariable=known_fft)
+known_fftEntry = tk.Entry(edit_frame_2, textvariable=known_fft)
 known_fftEntry.grid(row=7, column=1)
-# A text and label widget for the known fft of the STW.
 
-known_dwf = StringVar(metricPanel)
-known_dwf.set("")
-known_dwfLabel = tk.Label(metricPanel,
-    text="Known DWF:",
-    font=("Helvetica", 14, "bold"))
+known_dwf = StringVar(edit_frame_2)
+known_dwfLabel = tk.Label(edit_frame_2, text="Published DWF:", font=("Arial", 11), justify="left")
 known_dwfLabel.grid(row=8, column=0)
-known_dwfEntry = tk.Entry(metricPanel, textvariable=known_dwf)
+known_dwfEntry = tk.Entry(edit_frame_2, textvariable=known_dwf)
 known_dwfEntry.grid(row=8, column=1)
-# A text and label widget for the known dwf of the STW.
 
-known_pe = StringVar(metricPanel)
-known_pe.set("")
-known_peLabel = tk.Label(metricPanel,
-    text="Known PE:",
-    font=("Helvetica", 14, "bold"))
+known_pe = StringVar(edit_frame_2)
+known_peLabel = tk.Label(edit_frame_2, text="Published PE:", font=("Arial", 11), justify="left")
 known_peLabel.grid(row=9, column=0)
-known_peEntry = tk.Entry(metricPanel, textvariable=known_pe)
+known_peEntry = tk.Entry(edit_frame_2, textvariable=known_pe)
 known_peEntry.grid(row=9, column=1)
-# A text and label widget for the known pe of the STW.
+
+updateEntries(chosenSTW.get())
+
+# Create passphrase button in Edit widget
+submission_frame = tk.Frame(root, width=400, height=300)
+submission_frame.grid(row=5, column=0, padx=10, pady=0)
+passphrase_frame = tk.Frame(submission_frame, width=185, height=30)
+passphrase_frame.grid(row=1, column=1, padx=10, pady=10)
+passphrase = StringVar(passphrase_frame)
+passphrase.set("")
+passphraseLabel = tk.Label(passphrase_frame, text="Admin Passphrase:", font=("Arial", 11, "bold"), justify="left")
+passphraseLabel.grid(row=2, column=0)
+passphraseEntry = tk.Entry(passphrase_frame, textvariable=passphrase, show="*")
+passphraseEntry.grid(row=2, column=1)
+adminTip = tk.Button(passphrase_frame, text="?", state="disabled")
+adminTip.grid(row=2, column=2, padx=5)
+admin_ttp = Hovertip(adminTip, "Please enter the administrator passphrase\nto commit changes to the database.")
+
+# Create submit button in Edit widget
+submit_btn_frame = tk.Frame(submission_frame, width=185, height=30)
+submit_btn_frame.grid(row=2, column=1, padx=10, pady=(5,0))
+submit_btn = tk.Button(submit_btn_frame, text="Update STW", command=lambda: updateSTW(passphrase, nameVal, idwfVal, mirVal, tradeEffVal, perCapitaVal, popCatchVal, bodVal, known_fft, known_dwf, known_pe))
+submit_btn.grid(row=1, column=1, padx=0, pady=0)
+
+_blank = tk.Label(root, text="- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -", font=("Arial", 14))
+_blank.grid(row=6, column=0, pady=(10,0))
+
+# =====================================================================================================================================================================================
+# FOOTER SECTION
+# =====================================================================================================================================================================================
+
+# Create Footer widget
+footer_frame = tk.Frame(root, width=500, height=50)
+footer_frame.grid(row=7, column=0, padx=10, pady=0)
+
+# Create T&C's in Footer widget
+terms_frame = tk.Frame(footer_frame, width=350, height=30)
+terms_frame.grid(row=0, column=1, padx=(10,5), pady=5)
+link_var = StringVar()
+link_var.set("© 2022 - 2023, All Rights Reserved. See the user manual for contact details.")
+terms = tk.Label(terms_frame, textvariable=link_var, font=("Arial", 9), justify="left", anchor="w", cursor="hand2")
+terms.grid(row=0, column=1, padx=10)
 
 
-# Button to update the metrics of the STW.
-viewButton = tk.Button(metricPanel, text="Update STW", command=lambda: updateSTW())
-viewButton.grid(row=10, column=0)    
+# Create Quit Button in Footer widget
+quit_btn_frame = tk.Frame(footer_frame, width=100, height=30)
+quit_btn_frame.grid(row=0, column=2, padx=(5,10), pady=(10))
+quitBtn = tk.Button(quit_btn_frame, text="Quit Program", command=quitProg)
+quitBtn.grid(row=0, column=0, padx=5, pady=5)
 
-# Quit program button.
-quitButton = tk.Button(root, text="Quit Program", command=quitProg)
-quitButton.grid(row=3, column=0)
+# =====================================================================================================================================================================================
+# RUN PROGRAM
+# =====================================================================================================================================================================================
 
-try:
-    print("Program started...")
-    root.mainloop()
-    print("Program closed...")
-except Exception as e:
-    print(f"Failed... Error generated:\n{e}\n{traceback.print_exc()}")
-        
+try: root.mainloop()
+except Exception as e: print("Error: ", e)

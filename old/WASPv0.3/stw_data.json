@@ -1,16 +1,17 @@
 {
     "0": {
         "name": "Bledington",
-        "IDWF": "95040",
-        "MIR": "354240",
-        "TE": "0",
-        "PCDF": "139.9",
-        "POPC": "458",
-        "BOD": "15",
-        "O_FFT": "4.5",
-        "O_DWF": "249",
-        "O_PE": "620"
+        "IDWF": 95040,
+        "MIR": 354240,
+        "TE": 0,
+        "PCDF": 139.9,
+        "POPC": 458,
+        "BOD": 15,
+        "O_FFT": 4.5,
+        "O_DWF": 249,
+        "O_PE": 620
     },
+
     "1": {
         "name": "Broadwell",
         "IDWF": 354240,
@@ -23,6 +24,7 @@
         "O_DWF": 1010,
         "O_PE": 3632
     },
+
     "2": {
         "name": "Chadlington",
         "IDWF": 69120,
@@ -35,6 +37,7 @@
         "O_DWF": 180,
         "O_PE": 769
     },
+
     "3": {
         "name": "Charlbury",
         "IDWF": 69120,
@@ -47,6 +50,7 @@
         "O_DWF": 727,
         "O_PE": 3029
     },
+
     "4": {
         "name": "Chipping Norton",
         "IDWF": 380160,
@@ -59,6 +63,7 @@
         "O_DWF": 2000,
         "O_PE": 10767
     },
+
     "5": {
         "name": "Church Hanborough",
         "IDWF": 786240,
@@ -71,6 +76,7 @@
         "O_DWF": 1455,
         "O_PE": 8782
     },
+    
     "6": {
         "name": "Combe",
         "IDWF": 17280,
@@ -83,6 +89,7 @@
         "O_DWF": 175,
         "O_PE": 702
     },
+
     "7": {
         "name": "Enstone",
         "IDWF": 155520,
@@ -95,6 +102,7 @@
         "O_DWF": 450,
         "O_PE": 1576
     },
+
     "8": {
         "name": "Finstock",
         "IDWF": 0,
@@ -107,6 +115,7 @@
         "O_DWF": 635,
         "O_PE": 3647
     },
+
     "9": {
         "name": "Great Rollright",
         "IDWF": 8640,
@@ -119,6 +128,7 @@
         "O_DWF": 128,
         "O_PE": 437
     },
+
     "10": {
         "name": "Hook Norton",
         "IDWF": 8640,
@@ -131,6 +141,7 @@
         "O_DWF": 633,
         "O_PE": 2312
     },
+
     "11": {
         "name": "Little Compton",
         "IDWF": 8640,
@@ -143,6 +154,7 @@
         "O_DWF": 90,
         "O_PE": 354
     },
+
     "12": {
         "name": "Longborough",
         "IDWF": 51840,
@@ -155,6 +167,7 @@
         "O_DWF": 80,
         "O_PE": 522
     },
+
     "13": {
         "name": "Middle Barton",
         "IDWF": 69120,
@@ -167,6 +180,7 @@
         "O_DWF": 1188,
         "O_PE": 1579
     },
+    
     "14": {
         "name": "Milton-under-Wychwood",
         "IDWF": 475200,
@@ -179,6 +193,7 @@
         "O_DWF": 1165,
         "O_PE": 3977
     },
+
     "15": {
         "name": "Moreton in Marsh",
         "IDWF": 630720,
@@ -191,6 +206,7 @@
         "O_DWF": 1290,
         "O_PE": 5869
     },
+
     "16": {
         "name": "Sandford St Martin",
         "IDWF": 0,
@@ -203,6 +219,7 @@
         "O_DWF": 36,
         "O_PE": 130
     },
+
     "17": {
         "name": "Spelsbury",
         "IDWF": 0,
@@ -215,6 +232,7 @@
         "O_DWF": 50,
         "O_PE": 107
     },
+
     "18": {
         "name": "Woodstock",
         "IDWF": 345600,
