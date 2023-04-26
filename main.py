@@ -41,20 +41,20 @@ def callSTW(name):
     return stw_data
 
 # Update the data of a selected STW
-def updateSTW(passphrase, nameVal, idwfVal, mirVal, tradeEffVal, perCapitaVal, tdvVal, popCatchVal, bodVal, known_fft, known_dwf, known_pe):
+def updateSTW(passphrase, nameVal, idwfVal, mirVal, tradeEffVal, perCapitaVal, popCatchVal, tdvVal, bodVal, known_fft, known_dwf, known_pe):
     if messagebox.askyesno(title="Save Changes", message="Are you sure wish to update these metrics?\nResults for PE, FFT and DWF may change.") and passphrase.get() == "password":
         info = { 
-            "name": nameVal.get(),
-            "IDWF":idwfVal.get(),
-            "MIR":mirVal.get(),
-            "TE":tradeEffVal.get(),
-            "PCDF":perCapitaVal.get(),
-            "TDV":tdvVal.get(),
-            "POPC":popCatchVal.get(),
-            "BOD":bodVal.get(),
-            "O_FFT":known_fft.get(),
-            "O_DWF":known_dwf.get(),
-            "O_PE":known_pe.get(),
+            "name":nameVal.get(),
+            "IDWF":float(idwfVal.get()),
+            "MIR":float(mirVal.get()),
+            "TE":float(tradeEffVal.get()),
+            "PCDF":float(perCapitaVal.get()),
+            "TDV":float(tdvVal.get()),
+            "POPC":float(popCatchVal.get()),
+            "BOD":float(bodVal.get()),
+            "O_FFT":float(known_fft.get()),
+            "O_DWF":float(known_dwf.get()),
+            "O_PE":float(known_pe.get()),
         }
         
         for value in info.values():
@@ -110,12 +110,14 @@ def saveToExcel(name, fft, dwf, pe, o_fft, o_dwf, o_pe):
     # Convert the dictionary into a pandas DataFrame
     df = pd.DataFrame(data)
 
-    # Set the row index to be the calculation type (FFT, DWF, PE)
-    df.set_index(' ', inplace=True)
+    if not os.path.exists("STW_Reports"):
+        os.makedirs("STW_Reports")
+    
+    file_path = f'STW_Reports/{name}.xlsx'
 
     try:
-        df.to_excel(f"{name}.xlsx")
         messagebox.showinfo(title="Success", message="Saved to Excel")
+        df.to_excel(file_path, index=False)
     except: messagebox.showerror(title="Error", message="Sorry, there was a problem saving to Excel")
 
     return None
@@ -416,7 +418,7 @@ admin_ttp = Hovertip(adminTip, "Please enter the administrator passphrase\nto co
 # Create submit button in Edit widget
 submit_btn_frame = tk.Frame(submission_frame, width=185, height=30)
 submit_btn_frame.grid(row=2, column=1, padx=10, pady=(5,0))
-submit_btn = tk.Button(submit_btn_frame, text="Update STW", command=lambda: updateSTW(passphrase, nameVal, idwfVal, mirVal, tradeEffVal, perCapitaVal, popCatchVal, bodVal, known_fft, known_dwf, known_pe))
+submit_btn = tk.Button(submit_btn_frame, text="Update STW", command=lambda: updateSTW(passphrase, nameVal, idwfVal, mirVal, tradeEffVal, perCapitaVal, popCatchVal, tdvVal, bodVal, known_fft, known_dwf, known_pe))
 submit_btn.grid(row=1, column=1, padx=0, pady=0)
 
 _blank = tk.Label(root, text="- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -", font=("Arial", 14))
